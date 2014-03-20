@@ -1,0 +1,9 @@
+<launch>
+    <node pkg="roboteq_driver" type="driver_node" name="roboteq_driver" output="screen">
+        <rosparam>
+            port: /dev/ttyACM0
+            baud: 115200
+        </rosparam>
+	<rosparam param="channels">[Right,Left]</rosparam>
+    </node>
+</launch>

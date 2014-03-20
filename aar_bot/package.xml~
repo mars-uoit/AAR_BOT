@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+  <name>aar_bot</name>
+  <version>0.1.1</version>
+  <description>The aar_bot metapackage</description>
+
+  <maintainer email="Mike@test.com">Mike </maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>roboteq</run_depend>
+
+
+  <export>
+   <metapackage/>
+  </export>
+</package>
