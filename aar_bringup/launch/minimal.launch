@@ -1,9 +1,15 @@
 <launch>
+<group ns="AAR_BASE">
     <node pkg="roboteq_driver" type="driver_node" name="roboteq_driver" output="screen">
         <rosparam>
-            port: /dev/ttyACM0
+            port: /dev/ttyACM3
             baud: 115200
         </rosparam>
 	<rosparam param="channels">[Right,Left]</rosparam>
     </node>
+    <node pkg="aar_mobile_base" type="aar_mobile_base" name="odom_publisher" output="screen">
+    <remap from="left_feedback" to="Left/feedback"/>
+    <remap from="right_feedback" to="Right/feedback"/>
+    </node>
+</group>
 </launch>

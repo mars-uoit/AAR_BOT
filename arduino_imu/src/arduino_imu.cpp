@@ -166,12 +166,14 @@ void *rcvThread(void *arg)
       pubImu.publish(imuMsg);
 	
       // broadcast transform
+/*
       tf::Transform transform;
       transform.setOrigin( tf::Vector3(0.0, 0.0, 0.0) );
       transform.setRotation(qt );
 
       static tf::TransformBroadcaster br;
       br.sendTransform( tf::StampedTransform(transform, ros::Time::now(), "base_link",frame_id) );
+*/
     }
 
     // flush the contents of the input

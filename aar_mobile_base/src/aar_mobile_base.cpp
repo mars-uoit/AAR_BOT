@@ -1,4 +1,6 @@
 #include "ros/ros.h"
+#include <message_filters/subscriber.h>
+#include <message_filters/time_synchronizer.h>
 #include "geometry_msgs/Twist.h"
 #include "nav_msgs/Odometry.h"
 #include "roboteq_msgs/Command.h"
@@ -18,7 +20,7 @@ ros::Publisher velocityL;
 ros::Publisher velocityR;
 //tf::TransformBroadcaster *odom_broadcaster;
 
-static double ENCODER_RESOLUTION = 250*4;
+//static double ENCODER_RESOLUTION = 250*4; //dont need
 double wheel_circumference = 0.0;
 double wheel_base_length = 0.0;
 double wheel_diameter = 0.0;
@@ -31,14 +33,15 @@ double target_direction = 0.0;
 double rot_cov = 0.0;
 double pos_cov = 0.0;
 
-static double L_MAX = 20.0;
-static double R_MAX = 20.0;
+static double L_MAX = 200.0;
+static double R_MAX = 200.0;
 
 // Persistent variables
 double prev_x = 0, prev_y = 0, prev_w = 0;
 ros::Time prev_time;
+long prevEnc1=0, prevEnc2=0;
 
-/*double wrapToPi(double angle) {
+double wrapToPi(double angle) {
     angle += M_PI;
     bool is_neg = (angle < 0);
     angle = fmod(angle, (2.0*M_PI));
@@ -47,7 +50,7 @@ ros::Time prev_time;
     }
     angle -= M_PI;
     return angle;
-}*/
+}
 
 void cmd_velCallback(const geometry_msgs::Twist::ConstPtr& msg) {
 
@@ -115,51 +118,31 @@ void debugMsgCallback(const std::string &msg) {
     ROS_DEBUG("%s", msg.c_str());
 }*/
 
-void queryEncoders() {
-    // Make sure we are connected
-    if(!ros::ok() || mc == NULL || !mc->isConnected())
-        return;
+void queryEncoders(const roboteq_msgs::Feedback::ConstPtr& left_msg, const roboteq_msgs::Feedback::ConstPtr& right_msg) {
+
     
     long encoder1, encoder2;
     ros::Time now = ros::Time::now();
-    // Retreive the data
-    try {
-        mc->queryEncoders(encoder1, encoder2, true);
-        if (error_count > 0) {
-            error_count -= 1;
-        }
-    } catch(std::exception &e) {
-        if (string(e.what()).find("failed to receive ") != string::npos
-         && error_count != 10) {
-            error_count += 1;
-            ROS_WARN("Error reading the Encoders: %s", e.what());
-        } else {
-            ROS_ERROR("Error reading the Encoders: %s", e.what());
-            mc->disconnect();
-        }
-        return;
-    }
+    try{encoder1=left_msg->measured_position;}    
+        catch(const std::exception &e) {ROS_WARN("Trouble reading left encoder"); return;}
+    try{encoder2=right_msg->measured_position;}    
+        catch(const std::exception &e) {ROS_WARN("Trouble reading right encoder"); return;}
     
     double delta_time = (now - prev_time).toSec();
     prev_time = now;
     
-    // Convert to mps for each wheel from delta encoder ticks
-    double left_v = encoder1 * 2*M_PI / ENCODER_RESOLUTION;
+    // Convert to rads for each wheel from delta encoder ticks
+    double left_v = encoder1-prevEnc1;
+    prevEnc1=encoder1;
+    if (abs(left_v)>100000) {ROS_INFO("Left Encoder Wrap Around"); return;}
     left_v /= delta_time;
-    // left_v *= encoder_poll_rate;
-    double right_v = -encoder2 * 2*M_PI / ENCODER_RESOLUTION;
+
+    double right_v = -encoder2 +prevEnc2;
+    prevEnc2=encoder2;
+    if (abs(right_v)>100000) {ROS_INFO("Right Encoder Wrap Around"); return;}
     right_v /= delta_time;
-    // right_v *= encoder_poll_rate;
     
-    ax2550::StampedEncoders encoder_msg;
     
-    encoder_msg.header.stamp = now;
-    encoder_msg.header.frame_id = "base_link";
-    encoder_msg.encoders.time_delta = delta_time;
-    encoder_msg.encoders.left_wheel = encoder1;
-    encoder_msg.encoders.right_wheel = -encoder2;
-    
-    encoder_pub.publish(encoder_msg);
 
     double v = 0.0;
     double w = 0.0;
@@ -242,7 +225,7 @@ int main(int argc, char **argv) {
     
     // Odom Frame id parameter
     n.param("odom_frame_id", odom_frame_id, std::string("odom"));
-subscribe
+
     // Load up some covariances from parameters
     n.param("rotation_covariance",rot_cov, 1.0);
     n.param("position_covariance",pos_cov, 1.0);
@@ -263,7 +246,10 @@ subscribe
     
     // cmd_vel Subscriber
     ros::Subscriber sub = n.subscribe("cmd_vel", 1, cmd_velCallback);
-    ros::Subscriber listen = n.subscribe("cmd_vel", 1,queryEncoders);
+    message_filters::Subscriber<roboteq_msgs::Feedback> left_sub(n, "left_feedback", 1);
+    message_filters::Subscriber<roboteq_msgs::Feedback> right_sub(n, "right_feedback", 1);
+    message_filters::TimeSynchronizer<roboteq_msgs::Feedback, roboteq_msgs::Feedback> sync(left_sub, right_sub, 10);
+    sync.registerCallback(boost::bind(&queryEncoders, _1, _2));
     
     // Spinner
     //ros::AsyncSpinner spinner(1);

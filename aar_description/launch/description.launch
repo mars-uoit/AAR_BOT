@@ -1,0 +1,9 @@
+  
+<launch>
+    <param name="robot_description" textfile="$(find aar_description)/urdf/urdf_v2.xml"/>
+<group ns="AAR_DESCRIPTION">
+    <param name="robot_description" textfile="$(find aar_description)/urdf/urdf_v2.xml"/>
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="AAR_DESCRIPTION" >
+    </node>
+</group>
+</launch>

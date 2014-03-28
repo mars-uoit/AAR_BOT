@@ -1,0 +1,6 @@
+<launch>
+<include file="$(find aar_bringup)/launch/sensors.launch" />
+
+<include file="$(find aar_description)/launch/description.launch" />
+
+</launch>

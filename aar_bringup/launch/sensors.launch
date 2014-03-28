@@ -4,11 +4,11 @@
     <param name="baud" value="115200"/>
     <param name="frame_id" value="imu_link"/>
   </node>
+  <node pkg="LMS1xx" name="AAR_LASER" type="LMS100" output="screen">
+    <param name="host" value="192.168.1.14" />
+    <param name="frame_id" value="laser_link" />
+  </node>
   <group ns="AAR_GPS">
-    <node pkg="LMS1xx" name="AAR_LASER" type="LMS100" output="screen">
-      <param name="host" value="192.168.1.14" />
-      <param name="frame_id" value="laser_link" />
-    </node>
     <node pkg="nmea_navsat_driver" type="nmea_serial_driver" name="AAR_GPS" output="screen">
       <param name="port" value="/dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller-if00-port0"/>
       <param name="baud" value="4800"/>
@@ -17,9 +17,23 @@
       <remap from="odom" to="gps"/>
       <remap from="fix" to="fix" />
       <param name="rot_covariance" value="99999" />
-      <param name="frame_id" value="gps_link" />
+      <param name="frame_id" value="base_footprint" />
     </node>
   </group>
+  <node pkg="robot_pose_ekf" type="robot_pose_ekf" name="AAR_EKF" output="screen">
+    <param name="output_frame" value="odom_combined"/>
+    <param name="freq" value="30.0"/>
+    <param name="sensor_timeout" value="5.0"/>
+    <param name="odom_used" value="true"/>
+    <param name="imu_used" value="true"/>
+    <param name="gps_used" value="true"/>
+    <param name="vo_used" value="false"/>
+    <param name="debug" value="false"/>
+    <param name="self_diagnose" value="true"/>
+    <remap from="/gps" to="/AAR_GPS/gps"/>
+    <remap from="/imu_data" to="/AAR_IMU/Imu"/>
+    <remap from="/odom" to="/AAR_BASE/odom"/>
+  </node>
 </launch>
 
 

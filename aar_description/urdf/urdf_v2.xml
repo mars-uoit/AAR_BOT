@@ -1,0 +1,207 @@
+<?xml version="1.0"?>
+	<robot name="capstone">
+		<link name="base_link">
+			<visual>
+				<geometry>
+					<box size="0.001 0.001 0.001"/>
+				</geometry>
+			</visual>
+		</link>
+		
+		<link name="chassis_body">
+			<visual>
+				<geometry>
+					<box size="1.2 0.42 0.45"/>
+				</geometry>
+				<origin xyz="0 0 0"/>
+				<material name="Yellow">
+					<color rgba="0.7 0.7 0.5 0.75"/>
+				</material>
+			</visual>
+		</link>
+		
+		<joint name="base_to_chassis" type="fixed">
+			<parent link="base_link"/>
+			<child link="chassis_body"/>
+			<origin xyz="0 0 0.462"/>
+		</joint>
+		
+		<link name="right_front">
+			<visual>
+				<geometry>
+					<box size="0.56 0.045 0.09"/>
+				</geometry>
+				<origin rpy="0 0.6981 0" xyz="0.18 -0.0225 -0.151"/>
+				<material name="grey">
+					<color rgba="0.4 0.4 0.4 1.0"/>
+			    </material>
+			</visual>
+		</link>
+		
+		<joint name="chassis_to_rf" type="fixed">
+			<parent link="chassis_body"/>
+			<child link="right_front"/>
+			<origin xyz="0.075 -0.21 0.01"/>
+		</joint>
+		
+		<link name="right_front_wheel">
+			<visual>
+				<geometry>
+					<cylinder length="0.141" radius="0.17"/>
+				</geometry>
+				<origin rpy="1.5708 0 0" xyz="0 0 0"/>
+				<material name="black">
+					<color rgba="0 0 0 1.0"/>
+				</material>
+			</visual>
+		</link>
+		
+		<joint name="rf_to_rfw" type="fixed">
+			<parent link="right_front"/>
+			<child link="right_front_wheel"/>
+			<origin xyz="0.36 -0.1155 -0.287"/>
+		</joint>
+
+		<link name="right_rear">
+			<visual>
+				<geometry>
+					<box size="0.56 0.045 0.09"/>
+				</geometry>
+				<origin rpy="0 -0.6981 0" xyz="-0.18 -0.0225 -0.151"/>
+				<material name="grey">
+					<color rgba="0.4 0.4 0.4 1.0"/>
+				</material>
+			</visual>
+		</link>
+		
+		<joint name="chassis_to_rr" type="fixed">
+			<parent link="chassis_body"/>
+			<child link="right_rear"/>
+			<origin xyz="-0.075 -0.21 0.01"/>
+		</joint>
+		
+		<link name="right_rear_wheel">
+			<visual>
+				<geometry>
+					<cylinder length="0.141" radius="0.17"/>
+				</geometry>
+				<origin rpy="1.5708 0 0" xyz="0 0 0"/>
+				<material name="black">
+					<color rgba="0 0 0 1.0"/>
+				</material>
+			</visual>
+		</link>
+		
+		<joint name="rr_to_rrw" type="fixed">
+			<parent link="right_rear"/>
+			<child link="right_rear_wheel"/>
+			<origin xyz="-0.36 -0.1155 -0.287"/>
+		</joint>
+		
+		<link name="left_front">
+			<visual>
+				<geometry>
+					<box size="0.56 0.045 0.09"/>
+				</geometry>
+				<origin rpy="0 0.6981 0" xyz="0.18 0.0225 -0.151"/>
+				<material name="grey">
+					<color rgba="0.4 0.4 0.4 1.0"/>
+				</material>
+			</visual>
+		</link>0.225 -0.0225 0.1961
+		
+		<joint name="chassis_to_lf" type="fixed">
+			<parent link="chassis_body"/>
+			<child link="left_front"/>
+			<origin xyz="0.075 0.21 0.01"/>
+		</joint>
+		
+		<link name="left_front_wheel">
+			<visual>
+				<geometry>
+					<cylinder length="0.141" radius="0.17"/>
+				</geometry>
+				<origin rpy="-1.5708 0 0" xyz="0 0 0"/>
+				<material name="black">
+					<color rgba="0 0 0 1.0"/>
+				</material>
+			</visual>
+		</link>
+		
+		<joint name="lf_to_lfw" type="fixed">
+			<parent link="left_front"/>
+			<child link="left_front_wheel"/>
+			<origin xyz="0.36 0.1155 -0.287"/>
+		</joint>
+
+		<link name="left_rear">
+			<visual>
+				<geometry>
+					<box size="0.56 0.045 0.09"/>
+				</geometry>
+				<origin rpy="0 -0.6981 0" xyz="-0.18 0.0225 -0.151"/>
+				<material name="grey">
+					<color rgba="0.4 0.4 0.4 1.0"/>
+				</material>
+			</visual>
+		</link>
+		
+		<joint name="chassis_to_lr" type="fixed">
+			<parent link="chassis_body"/>
+			<child link="left_rear"/>
+			<origin xyz="-0.075 0.21 0.01"/>
+		</joint>
+		
+		<link name="left_rear_wheel">
+			<visual>
+				<geometry>
+					<cylinder length="0.141" radius="0.17"/>
+				</geometry>
+				<origin rpy="-1.5708 0 0" xyz="0 0 0"/>
+				<material name="black">
+					<color rgba="0 0 0 1.0"/>
+				</material>
+			</visual>
+		</link>
+		
+		<joint name="lr_to_lrw" type="fixed">
+			<parent link="left_rear"/>
+			<child link="left_rear_wheel"/>
+			<origin xyz="-0.36 0.1155 -0.287"/>
+		</joint>
+
+		<link name="laser_link">
+			<visual>
+				<geometry>
+					<cylinder length="0.162" radius="0.105"/>
+				</geometry>
+				<origin rpy="0 0 0" xyz="-0.0525 0 -0.081"/>
+				<material name="blue">
+					<color rgba="0 0.5 1 1.0"/>
+				</material>
+			</visual>
+		</link>
+		
+		<joint name="lidar_to_chassis" type="fixed">
+			<parent link="chassis_body"/>
+			<child link="laser_link"/>
+			<origin xyz="0.55 0 0.387"/>
+		</joint>
+		<link name="base_footprint">
+			<visual>
+				<geometry>
+					<box size="1.4 0.9 1"/>
+				</geometry>
+				<origin rpy="0 0 0" xyz="0 0 0.4"/>
+				<material name="black">
+					<color rgba="1 1 1 0"/>
+				</material>
+			</visual>
+		</link>
+		
+		<joint name="base_footprint_link" type="fixed">
+			<parent link="base_link"/>
+			<child link="base_footprint"/>
+			<origin xyz="0 0 0"/>
+		</joint>
+	</robot>
