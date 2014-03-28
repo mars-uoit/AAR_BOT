@@ -207,7 +207,7 @@ int main(int argc, char **argv)
 
   rosNode.param<int>("baud",baud , DEFAULT_BAUDRATE);
 
-  rosNode.param<std::string>("frame_id",frame_id , "imu_link");
+  rosNode.param(std::string("frame_id"),frame_id , std::string("imu_link"));
 
 
   ROS_INFO("connection initializing (%s) at %d baud", port, baud);
