@@ -1,4 +1,4 @@
-AAR_BOT
+AAR
 =======
 
-Capstone code
+Repositories for AAR (Autonomous Amphibious Robot) for Capstone 2013
